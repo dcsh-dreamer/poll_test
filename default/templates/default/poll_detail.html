@@ -5,7 +5,7 @@
 <div>{{ poll.created }}</div>
 <ul>
     {% for opt in options %}
-    <li>{{ opt.title }} - {{ opt.count }}票</li>
+    <li><a href="/poll/vote/{{ opt.id }}/">{{ opt.title }}</a> - {{ opt.count }}票</li>
     {% endfor %}
 </ul>
 {% endblock %}

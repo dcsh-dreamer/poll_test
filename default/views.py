@@ -23,14 +23,42 @@ class PollVote(RedirectView):
         opt = Option.objects.get(id=self.kwargs['oid'])
         opt.count += 1
         opt.save()
-        return "/poll/{}/".format(opt.poll_id)
+        # return "/poll/{}/".format(opt.poll_id)
+        return reverse('poll_view', args=[opt.poll_id])
 
 class PollCreate(CreateView):
     model = Poll
     fields = ['subject']
-    success_url = "/poll/"
+    # success_url = "/poll/"
+    def get_success_url(self):
+        return reverse('poll_list')
+
 
 class PollUpdate(UpdateView):
     model = Poll
     fields = ['subject']
-    success_url = "/poll/"
+
+    def get_success_url(self):
+        return reverse('poll_list')
+
+from django.urls import reverse
+
+class OptionCreate(CreateView):
+    model = Option
+    fields = ['title']
+    template_name = 'default/poll_form.html'
+
+    def get_success_url(self):
+        return reverse('poll_view', args=[self.kwargs['pid']])
+    
+    def form_valid(self, form):
+        form.instance.poll_id = self.kwargs['pid']
+        return super().form_valid(form)
+
+class OptionEdit(UpdateView):
+    model = Option
+    fields = ['title', 'count']
+    template_name = 'default/poll_form.html'
+
+    def get_success_url(self):
+        return reverse('poll_view', args=[self.object.poll_id])

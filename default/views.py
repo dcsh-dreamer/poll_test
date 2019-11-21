@@ -1,5 +1,5 @@
 from django.shortcuts import render, render_to_response
-from django.views.generic import ListView, DetailView, RedirectView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, RedirectView, CreateView, UpdateView, DeleteView
 from .models import *
 
 # Create your views here.
@@ -62,3 +62,17 @@ class OptionEdit(UpdateView):
 
     def get_success_url(self):
         return reverse('poll_view', args=[self.object.poll_id])
+
+class OptionDelete(DeleteView):
+    model = Option
+    template_name = 'confirm_delete.html'
+    def get_success_url(self):
+        return reverse('poll_view', args=[self.object.poll_id])
+
+class PollDelete(DeleteView):
+    model = Poll
+    template_name = 'confirm_delete.html'
+    def get_success_url(self):
+        Option.objects.filter(poll_id=self.object.id).delete()
+        return reverse('poll_list')
+
